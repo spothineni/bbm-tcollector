@@ -1,0 +1,14 @@
+Source: bbm-tcollector
+Priority: optional
+Maintainer: Tristan Colgate-McFarlane <tristanc@blinkbox.com>
+Standards-Version: 3.9.4
+Section: utils
+Build-Depends: debhelper ( >= 8 ), python-support, dh-bbm-info, default-jdk
+
+Package: bbm-tcollector
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, java-runtime-headless, python-pyintofy, tcollector
+Recommends: smartmontools
+Section: utils
+Description: A set of data collectors for tsdb
+  Additional collectors for OpenTSDB
