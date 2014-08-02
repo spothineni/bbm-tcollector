@@ -72,7 +72,7 @@ def enqueue_jmx(queue, interval, pid, patterns=[], mapFunc=None):
     ]
     # Build the classpath.
     dir = os.path.dirname(sys.argv[0])
-    jar = os.path.normpath(dir + "/usr/lib/tcollector/we7/lib/jmx-1.0.jar")
+    jar = "/usr/lib/tcollector/bbm/lib/jmx-1.0.jar"
     if not os.path.exists(jar):
         print >>sys.stderr, "Can't run, %s doesn't exist" % jar
         return 13
