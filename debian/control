@@ -7,7 +7,7 @@ Build-Depends: debhelper ( >= 8 ), python-support, dh-bbm-info, default-jdk
 
 Package: bbm-tcollector
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, java-runtime-headless, python-pyintofy, tcollector
+Depends: ${misc:Depends}, ${python:Depends}, java-runtime-headless, python-pyinotify, tcollector
 Recommends: smartmontools
 Section: utils
 Description: A set of data collectors for tsdb
