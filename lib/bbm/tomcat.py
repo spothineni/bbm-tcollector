@@ -12,5 +12,5 @@ def accesses2tsdb(v):
     return TSDBMetricData(metric,value,tags)
 
 tomcat_collector = [
-    JMXPattern("type=GlobalRequestProcessor", "^requestCount$", accesses2tsdb)
+    JMXPattern(".*type=GlobalRequestProcessor", "^requestCount$", accesses2tsdb)
     ]

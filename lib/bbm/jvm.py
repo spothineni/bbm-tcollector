@@ -1,3 +1,4 @@
+import sys
 from bbm import TSDBMetricData
 from bbm.jmx import JMXPattern
 
@@ -13,20 +14,15 @@ def threading2tsdb(v):
     return TSDBMetricData(metric,value)
 
 def memory2tsdb(v):
-    metric = "jvm.memory."
-    # e.g. jmx.java.lang.HeapMemoryUsage
-    memtype = v.metric[14:-11].lower()
-    tags = [ "type=" + memtype ]
-    newval =  TSDBMetricData(metric,"0", tags)
+    # e.g. jmx.java.lang.Usage.used
+    data = v.metric.split(".")
 
-    # e.g. big horrid string thing
-    valuesStr = v.value.split("{")[1].split("}")[0]
-    values = map(lambda x: x.strip(" "), valuesStr.split(","))
-    results = []
-    for value in values:
-      valtype, valval = value.split("=")
-      results = results + [ TSDBMetricData(metric + valtype, valval, tags) ]
-    return results
+    metric = "jvm.memory." + data[4]
+    value = v.value
+    memtype = data[3][:-11]
+    tags = [ "type=" + memtype ]
+
+    return TSDBMetricData(metric,value, tags)
 
 def fds2tsdb(v):
     metric = "jvm.filedescriptors."
@@ -49,28 +45,23 @@ def gc2tsdb(v):
     return TSDBMetricData(metric,value,tags)
 
 def mempool2tsdb(v):
-    metric = "jvm.memory.pool."
-    tags = ["name=undefined"]
+    # e.g. jmx.java.lang.HeapMemoryUsage.init
+    data = v.metric.split(".")
+
+    metric = "jvm.mempool." + data[4]
+    value = v.value
+    tags  = ["name=unknown"]
     for t in v.tags:
         if t.startswith("name="):
             tags = [ t.translate(None," ") ]
-            break
 
-    # e.g. big horrid string thing
-    valuesStr = v.value.split("{")[1].split("}")[0]
-    values = map(lambda x: x.strip(" "), valuesStr.split(","))
-    results = []
-    for value in values:
-      valtype, valval = value.split("=")
-      results = results + [ TSDBMetricData(metric + valtype, valval, tags) ]
-    return results
+    return TSDBMetricData(metric,value, tags)
 
 jvm_collector = [
     JMXPattern("java.lang:type=Threading","^(PeakThread|DaemonThread|Thread|TotalStartedThread)Count$",threading2tsdb),
-    JMXPattern("java.lang:type=Memory", "^(NonHeap|Heap)MemoryUsage$",memory2tsdb),
+    JMXPattern("java.lang:type=MemoryPool", "^Usage($|\.)",mempool2tsdb),
+    JMXPattern("java.lang:type=Memory$", "^(NonHeap|Heap)MemoryUsage",memory2tsdb),
     JMXPattern("java.lang:type=OperatingSystem", ".*FileDescriptorCount$",fds2tsdb),
     JMXPattern("java.lang:type=GarbageCollector", "^Collection",gc2tsdb),
-    JMXPattern("java.lang:type=MemoryPool", "^Usage$",mempool2tsdb),
-     
     ]
 

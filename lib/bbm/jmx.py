@@ -13,7 +13,7 @@ except ImportError:
 class JMXPattern:
     def __init__(self, query, attrRegexStr, handleFunc=None):
         self.query = query
-        self.queryRegex = re.compile(".*" + query + ".*")
+        self.queryRegex = re.compile(query)
         self.attrRegexStr = attrRegexStr
         self.attrRegex = re.compile(attrRegexStr)
         self.handleFunc = handleFunc
