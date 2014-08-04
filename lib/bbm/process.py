@@ -4,6 +4,7 @@ import subprocess
 import sys
 import time
 import select
+import atexit
 from threading  import Thread
 try:
     from Queue import Queue, Empty
@@ -24,6 +25,13 @@ def enqueue_process(queue, cmd, args, timeout=POLL_TIMEOUT_MS, onTimeOut=onTimeO
 
     try:
         proc1 = subprocess.Popen(command, stdout=subprocess.PIPE, bufsize=0, close_fds=ON_POSIX)
+        def forceclose():
+            try:
+                proce1.terminate()
+            except Exception as e:
+                return
+
+        atexit.register(forceclose)
 
         poll_obj = select.poll()
         poll_obj.register(proc1.stdout, select.POLLIN)
