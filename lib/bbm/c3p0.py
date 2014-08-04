@@ -9,7 +9,6 @@ def c3p0conns2tsdb(v):
     metric = metric + attr
     value = v.value
     return TSDBMetricData(metric,value)
-    return metric
 
 c3p0_collector = [
     JMXPattern("com.mchange.v2.c3p0:type=PooledDataSource", "^num.*Connections$", c3p0conns2tsdb)
