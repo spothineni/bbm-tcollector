@@ -27,7 +27,7 @@ signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 def renamer(v):
     return v
 
-q = start_jmx_collector(1, "6031", jvm_collector + c3p0_collector + tomcat_collector)
+q = start_jmx_collector(1, "6031", jvm_collector)
 
 while True:
   line = q.get()
