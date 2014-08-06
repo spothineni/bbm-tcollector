@@ -37,7 +37,6 @@ def enqueue_file(queue, filename, onFileTimeOut=defaultOnFileTimeOut, mapFunc=No
 # appear
 def enqueue_files(queue, base, pattern, fileFilter=None, onFileTimeOut=defaultOnFileTimeOut, mapFunc=None):
     def defaultFileFilter(f):
-        print "calling default"
         return True
 
     isWanted = defaultFileFilter
@@ -68,8 +67,6 @@ def enqueue_files(queue, base, pattern, fileFilter=None, onFileTimeOut=defaultOn
             if isWanted(newfile) == True and fnmatch.fnmatch(newfile, base + "/" + pattern):
                 print >>sys.stderr, "Start watching: %s" % newfile
                 launch_file_thread(queue,newfile)
-            else:
-                print >>sys.stderr, "Ignoring: %s" % newfile
                 
 
     wdd = wm.add_watch(base, mask, rec=True)
@@ -89,7 +86,6 @@ def enqueue_dated_files(queue, base, pattern, dateStr, mapFunc=None):
             print >>sys.stderr, "Carry on following %s" % filename
             return True
         else:
-            print >>sys.stderr, "Stopping following %s" % filename
             return False
 
     enqueue_files(queue, base, pattern, fileFilter=isCurrentLog, onFileTimeOut=isCurrentLog, mapFunc=mapFunc)
