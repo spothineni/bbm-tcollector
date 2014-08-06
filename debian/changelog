@@ -1,3 +1,9 @@
+bbm-tcollector (1.1) precise; urgency=low
+
+  * Update pound log tailer, and add core_api collector
+
+ -- tristan <tristan@clonebase.we7.local>  Wed, 06 Aug 2014 20:44:04 +0100
+
 bbm-tcollector (1.0) precise; urgency=low
 
   * Initial package creation
