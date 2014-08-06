@@ -14,7 +14,7 @@ import pyinotify
 from bbm import QUEUE_FINISHED, TSDBMetricData
 
 ON_POSIX = 'posix' in sys.builtin_module_names
-POLL_TIMEOUT_MS = 300000 # 5 minutes
+POLL_TIMEOUT_MS = 10000
 
 def onTimeOutTrue():
     return True
