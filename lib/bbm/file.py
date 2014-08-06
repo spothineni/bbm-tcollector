@@ -1,9 +1,14 @@
+from bbm import TSDBMetricData
 from bbm.process import enqueue_process
+import re
 import os
 import glob
 import sys
+import select
 import datetime
+import time
 import fnmatch
+from threading  import Thread
 import pyinotify
 try:
     from Queue import Queue, Empty
@@ -16,7 +21,8 @@ def defaultOnFileTimeOut(f):
 # Tail the current contents of a file into a python queue
 def enqueue_file(queue, filename, onFileTimeOut=defaultOnFileTimeOut, mapFunc=None):
     def onFileTimeOutThunk():
-        onFileTimeOut(filename)
+        result = onFileTimeOut(filename)
+        return result
 
     command = 'tail'
     args = ["--lines", "0", '-F'] + [ filename ]
@@ -59,7 +65,7 @@ def enqueue_files(queue, base, pattern, fileFilter=None, onFileTimeOut=defaultOn
     class PLogs(pyinotify.ProcessEvent):
         def process_IN_CREATE(self, event):
             newfile = os.path.join(event.path, event.name)
-            if isWanted(f) == True and fnmatch.fnmatch(newfile, base + "/" + pattern):
+            if isWanted(newfile) == True and fnmatch.fnmatch(newfile, base + "/" + pattern):
                 print >>sys.stderr, "Start watching: %s" % newfile
                 launch_file_thread(queue,newfile)
             else:
@@ -78,7 +84,13 @@ def enqueue_dated_files(queue, base, pattern, dateStr, mapFunc=None):
     def isCurrentLog(filename):
         now = datetime.datetime.now()
         # Determine what log file is current for the time right now
-        return filename == base + "/" + now.strftime(dateStr)
+
+        if filename == base + "/" + now.strftime(dateStr):
+            print >>sys.stderr, "Carry on following %s" % filename
+            return True
+        else:
+            print >>sys.stderr, "Stopping following %s" % filename
+            return False
 
     enqueue_files(queue, base, pattern, fileFilter=isCurrentLog, onFileTimeOut=isCurrentLog, mapFunc=mapFunc)
 
