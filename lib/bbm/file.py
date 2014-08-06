@@ -1,26 +1,22 @@
-from bbm import TSDBMetricData
 from bbm.process import enqueue_process
-import re
 import os
+import glob
 import sys
-import select
-from threading  import Thread
+import datetime
+import fnmatch
 import pyinotify
 try:
     from Queue import Queue, Empty
 except ImportError:
     from queue import Queue, Empty  # python 3.x
 
-def tail_file_to_queue(queue, filename, currFileDateStr, mapFunc=None):
-    # Get initial log file name
-    def onTimeOut():
-        then = datetime.datetime.now()
-        currlogfile = glob.glob(currFileDateStr % (then.year, then.month, then.day, then.hour))
-        if currlogfile != os.path.basename(filename):
-            print >>sys.stderr, "Stop watching %s" % filename
-            return False
-        else:
-            return True
+def defaultOnFileTimeOut(f):
+    return True
+
+# Tail the current contents of a file into a python queue
+def enqueue_file(queue, filename, onFileTimeOut=defaultOnFileTimeOut, mapFunc=None):
+    def onFileTimeOutThunk():
+        onFileTimeOut(filename)
 
     command = 'tail'
     args = ["--lines", "0", '-F'] + [ filename ]
@@ -28,23 +24,33 @@ def tail_file_to_queue(queue, filename, currFileDateStr, mapFunc=None):
         queue,
         command,
         args,
-        onTimeOut,
-        mapFunc)
+        onTimeOut=onFileTimeOutThunk,
+        mapFunc=mapFunc)
 
-def enqueue_files(queue, logDir, initFileGlob, currFileDateStr, mapFunc=None):
+# Enqueue all files under base, matching apttern. Use inotify to add any new files that
+# appear
+def enqueue_files(queue, base, pattern, fileFilter=None, onFileTimeOut=defaultOnFileTimeOut, mapFunc=None):
+    def defaultFileFilter(f):
+        print "calling default"
+        return True
+
+    isWanted = defaultFileFilter
+    if fileFilter != None:
+        isWanted = fileFilter
 
     def launch_file_thread(queue, filename):
-        t = Thread(target=enqueue_file, args=(queue, filename, currFileDateStr, mapFunc))
+        t = Thread(target=enqueue_file, args=(queue, filename, onFileTimeOut, mapFunc))
         t.daemon = True # thread dies with the program
         t.start()
 
-    # Get initial log file name
-    logfiles = glob.glob(logDir + "/" + initFileGlob)
-    print >>sys.stderr, "Found logs %s" % logfiles
+    # Get initial file names
+    files = glob.glob(base + "/" + pattern)
 
     # Launch tails for any initial files
-    for f in logfiles:
-        launch_file_thread(queue,f)
+    for f in files:
+        if isWanted(f) == True: 
+            print >>sys.stderr, "Start watching initial file %s" % f
+            launch_file_thread(queue,f)
 
     # Use inotify to watch for new files appearing
     wm = pyinotify.WatchManager()
@@ -53,19 +59,33 @@ def enqueue_files(queue, logDir, initFileGlob, currFileDateStr, mapFunc=None):
     class PLogs(pyinotify.ProcessEvent):
         def process_IN_CREATE(self, event):
             newfile = os.path.join(event.path, event.name)
-            if newfile.endswith("-pound.log"):
-                print >>sys.stderr, "Start watching: %s" %  newfile
+            if isWanted(f) == True and fnmatch.fnmatch(newfile, base + "/" + pattern):
+                print >>sys.stderr, "Start watching: %s" % newfile
                 launch_file_thread(queue,newfile)
+            else:
+                print >>sys.stderr, "Ignoring: %s" % newfile
+                
 
+    wdd = wm.add_watch(base, mask, rec=True)
     notifier = pyinotify.ThreadedNotifier(wm, PLogs())
-    wdd = wm.add_watch(logDir, mask, rec=True)
 
     notifier.start()
 
-def start_files_collector(logDir, initFileGlob, currFileDateStr, mapFunc=None):
+# Enqueue all files matching pattern. use dateStr to identify the file
+# matching the current log file, to allow us to stop watching old log files
+# when log content is no longer being written to them,
+def enqueue_dated_files(queue, base, pattern, dateStr, mapFunc=None):
+    def isCurrentLog(filename):
+        now = datetime.datetime.now()
+        # Determine what log file is current for the time right now
+        return filename == base + "/" + now.strftime(dateStr)
+
+    enqueue_files(queue, base, pattern, fileFilter=isCurrentLog, onFileTimeOut=isCurrentLog, mapFunc=mapFunc)
+
+def start_dated_files_collector(logDir, initFileGlob, currFileDateStr, mapFunc=None):
     q = Queue()
 
-    t = Thread(target=enqueue_files, args=(logDir, initFileGlob , currFileDateStr, mapFunc))
+    t = Thread(target=enqueue_dated_files, args=(q, logDir, initFileGlob , currFileDateStr, mapFunc))
     t.daemon = True # thread dies with the program
     t.start()
 
