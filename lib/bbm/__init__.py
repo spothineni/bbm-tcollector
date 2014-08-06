@@ -46,11 +46,12 @@ class TSDBMetricData:
         else:
             print >>sys.stderr, "Refusing to output %s, %s" % (self, err)
 
-def RunCollector(q):
+def RunCollector(q, exitOnFinished=True):
     while True:
         t = time.time()
         line = q.get()
         if line != QUEUE_FINISHED:
             line.output(t)
         else:
-            break
+            if exitOnFinished:
+                break
