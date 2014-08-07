@@ -22,5 +22,5 @@ if jpid == "":
 # We can change over to tomcat7 user for secturity
 utils.drop_privileges(user="tomcat7")
 
-RunCollector(start_jmx_collector(15, jpid, jvm_collector + tomcat_collector, extraTags=["application=tomcat7"])
+RunCollector(start_jmx_collector(15, jpid, jvm_collector + tomcat_collector), extraTags=["application=tomcat7"])
 
