@@ -28,5 +28,5 @@ if jpid == "":
 # We can change over to hte bbm-core-api user for secturity
 utils.drop_privileges(user="bbm-core-api")
 
-RunCollector(start_jmx_collector(5, jpid, jvm_collector + tomcat_collector + c3p0_collector, renamer))
+RunCollector(start_jmx_collector(15, jpid, jvm_collector + tomcat_collector + c3p0_collector, renamer), extraTags=["application=coreapi"])
 
