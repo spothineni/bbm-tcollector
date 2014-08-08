@@ -21,6 +21,8 @@ class LogParser:
     oldtime = 0
     requests_hash = {}
     bytessent_hash = {}
+    min_bytessent_hash = {}
+    max_bytessent_hash = {}
     duration_hash = {}
     min_duration_hash = {}
     max_duration_hash = {}
@@ -75,6 +77,16 @@ class LogParser:
                     self.bytessent_hash[tag] += int(http_bytes)
                 else:
                     self.bytessent_hash[tag] = int(http_bytes)
+
+                if tag in self.min_bytessent_hash:
+                    self.min_bytessent_hash[tag] = min(self.min_bytessent_hash[tag], val) 
+                else:
+                    self.min_bytessent_hash[tag] = val
+
+                if tag in self.max_bytessent_hash:
+                    self.max_bytessent_hash[tag] = max(self.max_bytessent_hash[tag], val) 
+                else:
+                    self.max_bytessent_hash[tag] = val
           
             val = float(http_duration)
             if tag in self.duration_hash:
@@ -104,6 +116,10 @@ class LogParser:
                 data = data + [TSDBMetricData("poundlogs.requests", self.requests_hash[tag] ,tag.split(" "))]
             for tag in self.bytessent_hash.keys():
                 data = data + [TSDBMetricData("poundlogs.bytes_sent", self.bytessent_hash[tag] ,tag.split(" "))]
+            for tag in self.min_bytessent_hash.keys():
+                data = data + [TSDBMetricData("poundlogs.bytes_sent_min", self.min_bytessent_hash[tag] ,tag.split(" "))]
+            for tag in self.max_bytessent_hash.keys():
+                data = data + [TSDBMetricData("poundlogs.bytes_sent_max", self.max_bytessent_hash[tag] ,tag.split(" "))]
             for tag in self.duration_hash.keys():
                 data = data + [TSDBMetricData("poundlogs.duration", self.duration_hash[tag] ,tag.split(" "))]
             for tag in self.min_duration_hash.keys():
@@ -113,6 +129,8 @@ class LogParser:
             self.oldtime = newtime
             self.min_duration_hash = {}
             self.max_duration_hash = {}
+            self.min_bytessent_hash = {}
+            self.max_bytessent_hash = {}
 
             return data
         else: 

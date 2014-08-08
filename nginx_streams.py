@@ -129,6 +129,8 @@ def main(argv):
     oldtime = int(round(time.time() * 1000)) - INTERVALMS*2
     requests_hash = {}
     bytessent_hash = {}
+    min_bytessent_hash = {}
+    max_bytessent_hash = {}
 
     while True:
         line = q.get()
@@ -168,10 +170,21 @@ def main(argv):
                 requests_hash[tag] = 1
 
             if bytessent.isdigit():
+                val = int(bytessent)
                 if tag in bytessent_hash:
-                    bytessent_hash[tag] += int(bytessent)
+                    bytessent_hash[tag] += val
                 else:
-                    bytessent_hash[tag] = int(bytessent)
+                    bytessent_hash[tag] = val
+
+                if tag in min_bytessent_hash:
+                    min_bytessent_hash[tag] = min(min_bytessent_hash[tag], val) 
+                else:
+                    min_bytessent_hash[tag] = val
+
+                if tag in max_bytessent_hash:
+                    max_bytessent_hash[tag] = max(max_bytessent_hash[tag], val) 
+                else:
+                    max_bytessent_hash[tag] = val
 
         newtime = int(round(time.time() * 1000))
           
@@ -180,8 +193,14 @@ def main(argv):
                 sys.stdout.write("nginx.streams.requests %d %d %s\n" % (int(newtime / 1000) , requests_hash[tag] ,tag))
             for tag in bytessent_hash.keys():
                 sys.stdout.write("nginx.streams.bytes_sent %d %d %s\n" % (int(newtime / 1000) , bytessent_hash[tag] ,tag))
+            for tag in min_bytessent_hash.keys():
+                sys.stdout.write("nginx.streams.bytes_sent_min %d %d %s\n" % (int(newtime / 1000) , min_bytessent_hash[tag] ,tag))
+            for tag in max_bytessent_hash.keys():
+                sys.stdout.write("nginx.streams.bytes_sent_max %d %d %s\n" % (int(newtime / 1000) , max_bytessent_hash[tag] ,tag))
             sys.stdout.flush()
             oldtime = newtime
+            min_bytessent_hash = {}
+            max_bytessent_hash = {}
 
     return 0  # Ask the tcollector to re-spawn us.
 
