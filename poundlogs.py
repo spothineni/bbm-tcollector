@@ -73,10 +73,11 @@ class LogParser:
                 self.requests_hash[tag] = 1
 
             if http_bytes.isdigit():
+                val = int(http_bytes)
                 if tag in self.bytessent_hash:
-                    self.bytessent_hash[tag] += int(http_bytes)
+                    self.bytessent_hash[tag] += val
                 else:
-                    self.bytessent_hash[tag] = int(http_bytes)
+                    self.bytessent_hash[tag] = val
 
                 if tag in self.min_bytessent_hash:
                     self.min_bytessent_hash[tag] = min(self.min_bytessent_hash[tag], val) 
