@@ -15,7 +15,7 @@ signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
 #Aug  5 19:59:54 iris pound: api.stagingb.we7.com 93.93.134.11 - - [05/Aug/2014:19:59:54 +0100] "GET /api/0.1/user/anonymousUserId?apiKey=radiosite&appVersion=1&locale=en_US HTTP/1.1" 200 47 "" "we7 HttpClient hulk-5-1406558659 (we7-no-session)" (- -> 10.0.9.123:8080) 0.009 sec
 
-poundRegex = re.compile("^.+ pound: ([a-zA-Z0-9\.:]+) [\d\.]+ - - \[[^\]]*\] \"([A-Z]+) ([^\"]*) [A-Z/\.[0-9]+\" ([0-9]+) (|[0-9\-]+) *.* ([0-9\.]+) sec$")
+poundRegex = re.compile("^.+ pound: ([a-zA-Z0-9\.:]+) [\d\.]+ - - \[[^\]]*\] \"([A-Z]+) ([^\"]*) [A-Z/\.[0-9]+\" ([0-9]+) ([0-9\-]+) .* ([0-9\.]+) sec$")
 
 class LogParser:
     oldtime = 0
