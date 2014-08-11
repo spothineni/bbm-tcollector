@@ -1,3 +1,9 @@
+bbm-tcollector (1.6) precise; urgency=low
+
+  * Move activemq_jmx collector to new style
+
+ -- tristan <tristan@clonebase.we7.local>  Mon, 11 Aug 2014 10:15:29 +0100
+
 bbm-tcollector (1.5) precise; urgency=low
 
   * Move voldemort collector to new style
