@@ -1,3 +1,10 @@
+bbm-tcollector (1.8) precise; urgency=low
+
+  * Jetty collector library, and fingerprinter, metadata and events-api
+    collectors
+
+ -- tristan <tristan@clonebase.we7.local>  Tue, 12 Aug 2014 16:12:51 +0100
+
 bbm-tcollector (1.7) precise; urgency=low
 
   * Update nginx_streams
