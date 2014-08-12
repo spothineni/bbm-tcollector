@@ -1,3 +1,9 @@
+bbm-tcollector (1.7) precise; urgency=low
+
+  * Update nginx_streams
+
+ -- tristan <tristan@clonebase.we7.local>  Tue, 12 Aug 2014 09:40:29 +0100
+
 bbm-tcollector (1.6) precise; urgency=low
 
   * Move activemq_jmx collector to new style
