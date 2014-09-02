@@ -1,3 +1,9 @@
+bbm-tcollector (1.9) precise; urgency=low
+
+  * Update streamlogs collector to new framework, parse radioreports properly
+
+ -- tristan <tristan@clonebase.we7.local>  Tue, 02 Sep 2014 08:38:32 +0100
+
 bbm-tcollector (1.8) precise; urgency=low
 
   * Jetty collector library, and fingerprinter, metadata and events-api
