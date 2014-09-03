@@ -22,6 +22,9 @@ class LogParser:
     ends_hash['type=played'] = 0
     ends_hash['type=paused'] = 0
 
+    olduserstime = 0
+    users_hash = {}
+
     def ParseLine(self, v):
         fields = v.split()
         if len(fields) == 5:
@@ -57,24 +60,35 @@ class LogParser:
                     self.starts_hash[tag] += 1
                 else:
                     self.starts_hash[tag] = 1
+
+                if tag in self.users_hash:
+                    self.users_hash[tag][records['USERID']] = True
+                else:
+                    self.users_hash[tag] = {}
+                    self.users_hash[tag][records['USERID']] = True
             elif call.startswith('StreamEnd'):
                 if 'PLAYEDTIME' in records:
                     self.ends_hash['type=played'] += int(records['PLAYEDTIME'])
                 if 'PAUSEDTIME' in records:
                     self.ends_hash['type=paused'] += int(records['PAUSEDTIME'])
 
+        data = []
+
         newtime = int(round(time.time() * 1000))
         if (newtime - self.oldtime) >= 5000:
-            data = []
             for tag in self.starts_hash.keys():
                 data = data + [TSDBMetricData("streams.requests", self.starts_hash[tag],tag.split(" "))]
             for tag in self.ends_hash.keys():
                 data = data + [TSDBMetricData("streams.duration", self.ends_hash[tag],tag.split(" "))]
             self.oldtime = newtime
 
-            return data
-        else: 
-            return  []
+        if (newtime - self.olduserstime) >= (1000 * 60 * 5): # Only output users stats every 5 minutes
+            for tag in self.users_hash.keys():
+                data = data + [TSDBMetricData("streams.users.5min", len(self.users_hash[tag]),tag.split(" "))]
+            self.users_hash = {}
+            self.olduserstime = newtime
+
+        return data
 
 utils.drop_privileges(user="nobody")
 

@@ -1,3 +1,9 @@
+bbm-tcollector (1.10) precise; urgency=low
+
+  * Update streamlogs collector to track active users
+
+ -- tristan <tristan@clonebase.we7.local>  Wed, 03 Sep 2014 09:16:01 +0100
+
 bbm-tcollector (1.9) precise; urgency=low
 
   * Update streamlogs collector to new framework, parse radioreports properly
