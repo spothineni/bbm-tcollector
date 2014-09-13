@@ -1,3 +1,9 @@
+bbm-tcollector (1.11) precise; urgency=low
+
+  * Add SIGCHILD ignore to the varnish collector
+
+ -- tristan <tristan@clonebase.we7.local>  Sat, 13 Sep 2014 16:56:29 +0100
+
 bbm-tcollector (1.10) precise; urgency=low
 
   * Update streamlogs collector to track active users

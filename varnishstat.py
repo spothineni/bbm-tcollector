@@ -52,6 +52,9 @@ vstats = "all"
 # ])
 
 def main():
+ # ignore SIGCHLD, prevent the zombie apocalypse
+ signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+
  utils.drop_privileges()
  bad_regex = re.compile("[,()]+")  # avoid forbidden by TSD symbols
 
