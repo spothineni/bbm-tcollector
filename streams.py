@@ -37,7 +37,7 @@ class LogParser:
             elif len(logdata) == 2:
               if logdata[0] == "RadioReport":
                 call,data = logdata[1].split(':',1)
-              else:  
+              else:
                 call = logdata[0]
                 data = logdata[1]
             else:
