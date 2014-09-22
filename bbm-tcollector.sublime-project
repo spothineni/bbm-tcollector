@@ -1,0 +1,38 @@
+{
+    "SublimeLinter":
+    {
+        "linters":
+        {
+            "pylint":
+            {
+                "paths":
+                [
+                    "/usr/lib/tcollector",
+                    "lib",
+                ],
+                "disable": [ "W0511", "C0103" ],
+            }
+        }
+    },
+    "settings":
+    {
+        "tag_file" : "tags",
+        "tab_size": 4,
+        "popup_errors_on_save": true,
+        "sublimelinter_run": true,
+    },
+    "folders":
+    [
+		{
+			"follow_symlinks": true,
+		    "path": ".",
+            "name": "tcollector Plugins",
+            "file_exclude_patterns":
+            [
+                "bbm-tcollector.sublime-project",
+                "*.sublime-workspace",
+                "tags",
+            ]
+		}
+	]
+}
