@@ -1,3 +1,9 @@
+bbm-tcollector (1.12) unstable; urgency=medium
+
+  * Add support for monitoring HAProxy.
+
+ -- Jonathan Wright <jonathanw@blinkbox.com>  Mon, 22 Sep 2014 16:21:25 +0100
+
 bbm-tcollector (1.11) precise; urgency=low
 
   * Add SIGCHILD ignore to the varnish collector

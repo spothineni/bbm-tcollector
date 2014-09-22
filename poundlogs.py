@@ -41,7 +41,7 @@ class LogParser:
                 http_args   = urlparse.parse_qs(url[1])
                 if "apiKey" in http_args:
                     api_key = http_args['apiKey'][0]
-            
+
             http_port=False
 
             if ':' in http_host:
@@ -56,7 +56,7 @@ class LogParser:
                   http_status,
                   http_method,
                   )
-            
+
             # We need to indicate if we have no api key, or we get
             # overlapping duplicate tsdb series
             if api_key != "":
@@ -80,15 +80,15 @@ class LogParser:
                     self.bytessent_hash[tag] = val
 
                 if tag in self.min_bytessent_hash:
-                    self.min_bytessent_hash[tag] = min(self.min_bytessent_hash[tag], val) 
+                    self.min_bytessent_hash[tag] = min(self.min_bytessent_hash[tag], val)
                 else:
                     self.min_bytessent_hash[tag] = val
 
                 if tag in self.max_bytessent_hash:
-                    self.max_bytessent_hash[tag] = max(self.max_bytessent_hash[tag], val) 
+                    self.max_bytessent_hash[tag] = max(self.max_bytessent_hash[tag], val)
                 else:
                     self.max_bytessent_hash[tag] = val
-          
+
             val = float(http_duration)
             if tag in self.duration_hash:
                 self.duration_hash[tag] += val
@@ -96,19 +96,19 @@ class LogParser:
                 self.duration_hash[tag] = val
 
             if tag in self.min_duration_hash:
-                self.min_duration_hash[tag] = min(self.min_duration_hash[tag], val) 
+                self.min_duration_hash[tag] = min(self.min_duration_hash[tag], val)
             else:
                 self.min_duration_hash[tag] = val
 
             if tag in self.max_duration_hash:
-                self.max_duration_hash[tag] = max(self.max_duration_hash[tag], val) 
+                self.max_duration_hash[tag] = max(self.max_duration_hash[tag], val)
             else:
                 self.max_duration_hash[tag] = val
 
         except Exception as e:
             print >>sys.stderr, e
             return []
-                  
+
         newtime = int(round(time.time() * 1000))
 
         if (newtime - self.oldtime) >= 5000:
@@ -134,7 +134,7 @@ class LogParser:
             self.max_bytessent_hash = {}
 
             return data
-        else: 
+        else:
             return  []
 
 
