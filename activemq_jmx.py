@@ -38,6 +38,12 @@ def rewriter(v):
         # The only tag we'll keep is the queue destination
         v.tags = [t.lower() for t in v.tags if t.startswith("Destination=")]
 
+        # Filter out any transient mcollective reply queues, or we'll just
+        # eat tag values
+        for t in v.tags:
+            if t.startswith("destination=mcollective.reply"):
+                return []
+
         if v.metric.endswith("Count"):
             v.metric = v.metric[:-1 * len("Count")].lower() + "_count"
             if v.metric.startswith("total"):

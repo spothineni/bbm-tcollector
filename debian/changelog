@@ -1,3 +1,9 @@
+bbm-tcollector (1.13) precise; urgency=low
+
+  * Skip mcollective response queue in activemq_jmx
+
+ -- tristan <tristan@clonebase.we7.local>  Fri, 26 Sep 2014 08:27:28 +0100
+
 bbm-tcollector (1.12) unstable; urgency=medium
 
   * Add support for monitoring HAProxy.
