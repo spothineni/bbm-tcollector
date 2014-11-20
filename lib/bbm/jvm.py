@@ -36,7 +36,8 @@ def gc2tsdb(v):
     tags = ["name=undefined"]
     for t in v.tags:
         if t.startswith("name="):
-            tags = [ t ]
+            # some GC names have spaces in
+            tags = [ t.replace(" ","_") ]
             break
     #jmx.java.lang.CollectionCount
     attr = v.metric[24:].lower()

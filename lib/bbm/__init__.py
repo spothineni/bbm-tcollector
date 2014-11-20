@@ -13,7 +13,7 @@ import pyinotify
 
 QUEUE_FINISHED = object()
 
-ValidTSDBStringRegex = re.compile("[a-zA-Z0-9_/\-\.]+")
+ValidTSDBStringRegex = re.compile("^[a-zA-Z0-9_/\-\.]+$")
 class TSDBMetricData:
     def __init__(self, metric, value, tags=[]):
         self.metric = metric
