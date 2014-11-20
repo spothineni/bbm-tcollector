@@ -21,6 +21,7 @@ import subprocess
 import sys
 import time
 import re
+import signal
 
 from collectors.lib import utils
 
