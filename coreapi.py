@@ -22,7 +22,7 @@ def renamer(v):
     return v
 
 # Find the pid of the bbm-core-api server
-pgrep = subprocess.check_output(["/usr/bin/pgrep","-u", "bbm-core-api", "java"])
+pgrep = subprocess.check_output(["/usr/bin/pgrep","-f", "-u", "bbm-core-api", "/usr/share/bbm-core-api/ROOT.war"])
 jpid = pgrep.rstrip("\n")
 if jpid == "":
    sys.exit(1)
