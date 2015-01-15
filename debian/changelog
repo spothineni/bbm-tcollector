@@ -1,3 +1,9 @@
+bbm-tcollector (1.18) precise; urgency=low
+
+  * Add postgres per-talble stats
+
+ -- tristan <tristan@clonebase.we7.local>  Thu, 15 Jan 2015 16:18:08 +0000
+
 bbm-tcollector (1.17) precise; urgency=low
 
   * Add collectors for admin,sonos and search
