@@ -27,8 +27,7 @@ import errno
 
 try:
   import psycopg2
-except ImportError:
-  psycopg2 = None # handled in main()
+except ImportError: psycopg2 = None # handled in main()
 
 COLLECTION_INTERVAL = 15 # seconds
 CONNECT_TIMEOUT = 2 # seconds
@@ -136,6 +135,17 @@ def collect(db):
             value = tbliostats[j][k]
             print ("postgresql.io.table.%s %i %s database=%s schema=%s table=%s" % (metric, ts, value, database, schema,table))
       tbliocursor.close()
+
+      tbllockcursor = tbldb.cursor()
+      tbllockcursor.execute("select  c.relname ,mode,COUNT(virtualtransaction)  from pg_locks JOIN pg_class c ON relation = c.oid WHERE relation IS NOT NULL  GROUP BY c.relname,mode;")
+      tbllockstats = tbllockcursor.fetchall()
+      for j in range(0,len(tbllockstats)):
+          table = tbllockstats[j][0]
+          mode = tbllockstats[j][1]
+          value = tbllockstats[j][2]
+          print ("postgresql.locks.table %i %s database=%s schema=%s table=%s mode=%s" % (ts, value, database, schema,table,mode))
+      tbliocursor.close()
+
 
     # connections
     cursor.execute("SELECT datname, count(datname) FROM pg_stat_activity"
