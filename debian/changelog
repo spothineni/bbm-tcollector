@@ -1,3 +1,9 @@
+bbm-tcollector (1.20) precise; urgency=medium
+
+  * Add timings log graphing
+
+ -- tristan <tristan@ictinus.we7.local>  Mon, 11 May 2015 11:00:49 +0100
+
 bbm-tcollector (1.19) precise; urgency=low
 
   * Add postgresql per-table lock countrs
